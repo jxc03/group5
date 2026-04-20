@@ -27,11 +27,11 @@ load_preprocessed_data <- function(config) {
 
   message("[LR] Loading CSV files...")
 
-  train       <- read.csv(config$train_path,       stringsAsFactors = FALSE)
-  train_rose  <- read.csv(config$train_rose_path,  stringsAsFactors = FALSE)
+  train <- read.csv(config$train_path, stringsAsFactors = FALSE)
+  train_rose <- read.csv(config$train_rose_path, stringsAsFactors = FALSE)
   train_smote <- read.csv(config$train_smote_path, stringsAsFactors = FALSE)
-  val         <- read.csv(config$val_path,         stringsAsFactors = FALSE)
-  test        <- read.csv(config$test_path,        stringsAsFactors = FALSE)
+  val <- read.csv(config$val_path, stringsAsFactors = FALSE)
+  test <- read.csv(config$test_path, stringsAsFactors = FALSE)
 
   # Re-level target so "Yes" = positive class in caret
   relevel_target <- function(df) {
@@ -39,11 +39,11 @@ load_preprocessed_data <- function(config) {
     return(df)
   }
 
-  train       <- relevel_target(train)
-  train_rose  <- relevel_target(train_rose)
+  train <- relevel_target(train)
+  train_rose <- relevel_target(train_rose)
   train_smote <- relevel_target(train_smote)
-  val         <- relevel_target(val)
-  test        <- relevel_target(test)
+  val <- relevel_target(val)
+  test <- relevel_target(test)
 
   message("[LR] Class distributions after loading:")
   message(" Original - ", paste(names(table(train$HeartDisease)),
@@ -85,10 +85,10 @@ train_and_select_lr <- function(datasets, config) {
   # classProbs: needed to output probabilities for ROC-AUC scoring
   # twoClassSummary: reports ROC, Sensitivity, Specificity per fold
   cv_control <- trainControl(
-    method          = "repeatedcv",
-    number          = config$cv_folds,
-    repeats         = config$cv_repeats,
-    classProbs      = TRUE,
+    method = "repeatedcv",
+    number = config$cv_folds,
+    repeats = config$cv_repeats,
+    classProbs = TRUE,
     summaryFunction = twoClassSummary,
     savePredictions = "final"
   )
@@ -96,8 +96,8 @@ train_and_select_lr <- function(datasets, config) {
   # Train each variant using the same CV settings and seed for fair comparison
   training_sets <- list(
     original = datasets$train,
-    rose     = datasets$train_rose,
-    smote    = datasets$train_smote
+    rose = datasets$train_rose,
+    smote = datasets$train_smote
   )
 
   all_models <- list()
@@ -142,7 +142,6 @@ train_and_select_lr <- function(datasets, config) {
   ))
 }
 
-
 # Evaluate on Test Set
 # 
 # Evaluates the selected model on the held-out test set (heart_test.csv)
@@ -168,42 +167,42 @@ evaluate_lr <- function(best_model, best_label, test_df, config) {
 
   # Confusion matrix - positive = "Yes" orients TP/FP/FN/TN around heart disease
   cm <- confusionMatrix(
-    data      = pred_class,
+    data = pred_class,
     reference = test_df$HeartDisease,
     positive  = config$positive_class
   )
 
   # ROC curve object
   roc_obj <- roc(
-    response  = test_df$HeartDisease,
+    response = test_df$HeartDisease,
     predictor = pred_prob,
-    levels    = c(config$negative_class, config$positive_class),
+    levels = c(config$negative_class, config$positive_class),
     direction = "<"
   )
 
   # One row metrics data frame - rbind(), compatible with DT and RF results
   metrics_df <- data.frame(
-    Model             = paste0("Logistic Regression (", best_label, ")"),
-    Accuracy          = as.numeric(cm$overall["Accuracy"]),
+    Model = paste0("Logistic Regression (", best_label, ")"),
+    Accuracy = as.numeric(cm$overall["Accuracy"]),
     Balanced_Accuracy = as.numeric(cm$byClass["Balanced Accuracy"]),
-    Sensitivity       = as.numeric(cm$byClass["Sensitivity"]),
-    Specificity       = as.numeric(cm$byClass["Specificity"]),
-    Precision         = as.numeric(cm$byClass["Pos Pred Value"]),
-    F1_Score          = as.numeric(cm$byClass["F1"]),
-    ROC_AUC           = as.numeric(auc(roc_obj)),
-    stringsAsFactors  = FALSE
+    Sensitivity = as.numeric(cm$byClass["Sensitivity"]),
+    Specificity = as.numeric(cm$byClass["Specificity"]),
+    Precision = as.numeric(cm$byClass["Pos Pred Value"]),
+    F1_Score = as.numeric(cm$byClass["F1"]),
+    ROC_AUC = as.numeric(auc(roc_obj)),
+    stringsAsFactors = FALSE
   )
 
   message("[LR] Test set results:")
   print(round(metrics_df[, -1], 4))
 
   return(list(
-    metrics          = metrics_df,
+    metrics = metrics_df,
     confusion_matrix = cm,
-    roc_obj          = roc_obj,
-    predictions      = data.frame(actual    = test_df$HeartDisease,
-                                  predicted = pred_class,
-                                  prob_yes  = pred_prob)
+    roc_obj = roc_obj,
+    predictions  = data.frame(actual = test_df$HeartDisease,
+                              predicted = pred_class,
+                              prob_yes = pred_prob)
   ))
 }
 
@@ -240,10 +239,10 @@ plot_lr_results <- function(lr_results, config) {
     theme(plot.title = element_text(face = "bold"))
 
   # Confusion Matrix
-  cm_df       <- as.data.frame(lr_results$confusion_matrix$table)
-  n_total     <- sum(cm_df$Freq)
+  cm_df <- as.data.frame(lr_results$confusion_matrix$table)
+  n_total <- sum(cm_df$Freq)
   cm_df$label <- paste0(cm_df$Freq, "\n(",
-                         round(cm_df$Freq / n_total * 100, 1), "%)")
+                        round(cm_df$Freq / n_total * 100, 1), "%)")
 
   cm_plot <- ggplot(cm_df, aes(x = Reference, y = Prediction, fill = Freq)) +
     geom_tile(colour = "white", linewidth = 1.5) +
@@ -257,10 +256,10 @@ plot_lr_results <- function(lr_results, config) {
 
   # Save 
   roc_path <- file.path(config$output_dir, "lr_roc_curve.png")
-  cm_path  <- file.path(config$output_dir, "lr_confusion_matrix.png")
+  cm_path <- file.path(config$output_dir, "lr_confusion_matrix.png")
 
   ggsave(roc_path, plot = roc_plot, width = 6, height = 5, dpi = 300)
-  ggsave(cm_path,  plot = cm_plot,  width = 5, height = 4, dpi = 300)
+  ggsave(cm_path, plot = cm_plot,  width = 5, height = 4, dpi = 300)
 
   message("[LR] Plots saved: ", roc_path, " | ", cm_path)
 
@@ -277,15 +276,15 @@ if (!exists("SOURCED_BY_MAIN")) {
 
   source("config.R")
 
-  datasets    <- load_preprocessed_data(CONFIG)
+  datasets <- load_preprocessed_data(CONFIG)
   lr_training <- train_and_select_lr(datasets, CONFIG)
-  lr_results  <- evaluate_lr(lr_training$best_model,
-                              lr_training$best_label,
-                              datasets$test, CONFIG)
-  lr_plots    <- plot_lr_results(lr_results, CONFIG)
+  lr_results <- evaluate_lr(lr_training$best_model,
+                            lr_training$best_label,
+                            datasets$test, CONFIG)
+  lr_plots <- plot_lr_results(lr_results, CONFIG)
 
   saveRDS(lr_training, file.path(CONFIG$output_dir, "lr_training.rds"))
-  saveRDS(lr_results,  file.path(CONFIG$output_dir, "lr_results.rds"))
+  saveRDS(lr_results, file.path(CONFIG$output_dir, "lr_results.rds"))
 
   message("[LR] Done. Outputs saved to: ", CONFIG$output_dir)
 }
