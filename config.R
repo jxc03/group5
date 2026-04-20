@@ -7,7 +7,7 @@ CONFIG <- list(
 
   # File paths - produced bypreprocessingScript.R
   train_path = "data/heart_train.csv",
-  train_rose_path  = "data/heart_train_rose.csv",
+  train_rose_path = "data/heart_train_rose.csv",
   train_smote_path = "data/heart_train_smote.csv",
   val_path = "data/heart_val.csv",
   test_path = "data/heart_test.csv",
@@ -32,8 +32,8 @@ CONFIG <- list(
   # 
   # "Yes" is the positive class (heart disease present)
   # This must match the factor relevelling done in each modelling script
-  positive_class   = "Yes",
-  negative_class   = "No"
+  positive_class = "Yes",
+  negative_class = "No"
 )
 
 # Create the output directory if it does not already exist
