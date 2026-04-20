@@ -46,32 +46,32 @@ safe_source <- function(filepath) {
 #
 # The output CSVs already exist in data/ so this step only needs to
 # be re-run if the raw dataset or preprocessing decisions change
-safe_source("1_preprocessingScript.R")
+safe_source("scripts/1_preprocessingScript.R")
 
 # Exploratory Data Analysis [Aleemna]
 #
 # 2_eda.R produces descriptive statistics, class balance summaries and
 # all exploratory visualisations. These are saved to outputs/ and used
 # in the Results section of the IEEE paper
-safe_source("2_eda.R")
+safe_source("scripts/2_eda.R")
 
 # Logistic Regression [Jonnie]
 #
 # Trains three LR variants (original, ROSE, SMOTE), selects the best using
 # validation AUC, evaluates on the test set and saves plots + model objects.
-safe_source("3_logistic_regression.R")
+safe_source("scripts/3_logistic_regression.R")
 
 # Decision Tree [Yasar]
 #
 # Trains and evaluates the C5.0 Decision Tree model on the test set
 # Saves a standardised metrics data frame (dt_results.rds) to outputs/
-safe_source("04_decision_tree.R")
+safe_source("scripts/4_decision_tree.R")
 
 # Random Forest [Aleemna]
 #
 # Trains and evaluates the Random Forest model, including feature importances
 # Saves a standardised metrics data frame (rf_results.rds) to outputs/
-safe_source("05_random_forest.R")
+safe_source("scripts/5_random_forest.R")
 
 # Cross-Model Evaluation [Jonnie]
 # 
@@ -86,7 +86,7 @@ required_results <- c(
 )
 
 if (all(file.exists(required_results))) {
-  safe_source("06_evaluation.R")
+  safe_source("scripts/6_evaluation.R")
 } else {
   missing <- required_results[!file.exists(required_results)]
   message("--- SKIPPED: 06_evaluation.R ---")
