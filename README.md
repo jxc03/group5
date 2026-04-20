@@ -56,15 +56,16 @@ project/
 │   ├── lr_training.rds
 │   ├── lr_results.rds
 │   └── ...
-│
-├── 00_config.R
-├── 01_preprocessing.R
-├── 02_eda.R
-├── 03_logistic_regression.R
-├── 04_decision_tree.R
-├── 05_random_forest.R
-├── 06_evaluation.R
-├── main.R
+│── scripts/  
+|   ├──01_preprocessing.R
+|   ├──02_eda.R
+|   ├──03_logistic_regression.R
+|   ├──04_decision_tree.R
+|   ├──05_random_forest.R
+|   ├──06_evaluation.R
+|
+|   config.R
+|   main.R
 └── README.md
 ```
 
@@ -86,7 +87,7 @@ to the `outputs/` folder.
 Each modelling script (e.g. `03_logistic_regression.R`) can be run on its own for development and testing:
 
 ```r
-source("03_logistic_regression.R")
+source("3_logistic_regression.R")
 ```
 
 The standalone execution guard at the bottom of each script detects whether it's being sourced by `main.R` or run directly, and behaves accordingly.
@@ -118,7 +119,7 @@ install.packages(c(
 ```
 Raw BRFSS CSV
     │
-    ▼  01_preprocessing.R (Salah)
+    ▼  1_preprocessing.R (Salah)
 Outlier capping (1st–99th percentile)
 Z-score standardisation
 One-hot encoding (Sex, Race, Diabetic)
@@ -127,23 +128,23 @@ Boruta feature selection (run on 1,000-row sample)
 70 / 15 / 15 stratified split  →  train / val / test CSVs
 ROSE and SMOTE applied to training set only
     │
-    ▼  02_eda.R (Aleemna)
+    ▼  2_eda.R (Aleemna)
 Descriptive statistics, correlation analysis, class balance plots
     │
-    ├──▶  03_logistic_regression.R (Jonnie)
+    ├──▶  3_logistic_regression.R (Jonnie)
     │     Trains 3 LR variants (original/ROSE/SMOTE)
     │     Selects best on validation AUC
     │     Evaluates on test set
     │
-    ├──▶  04_decision_tree.R (Yasar)
+    ├──▶  4_decision_tree.R (Yasar)
     │     C5.0 with cross-validation
     │     Evaluates on test set
     │
-    └──▶  05_random_forest.R (Aleemna)
+    └──▶  5_random_forest.R (Aleemna)
           Random Forest with feature importances
           Evaluates on test set
     │
-    ▼  06_evaluation.R (Jonnie)
+    ▼  6_evaluation.R (Jonnie)
 Comparison table of all models
 ROC curve overlay plot
 ```
