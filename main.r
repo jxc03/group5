@@ -86,7 +86,7 @@ required_results <- c(
 )
 
 if (all(file.exists(required_results))) {
-  safe_source("scripts/6_evaluation.R")
+  safe_source("scripts/6_evaluations.R")
 } else {
   missing <- required_results[!file.exists(required_results)]
   message("--- SKIPPED: 06_evaluation.R ---")
