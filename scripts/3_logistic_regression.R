@@ -266,25 +266,35 @@ plot_lr_results <- function(lr_results, config) {
   return(list(roc_plot = roc_plot, cm_plot = cm_plot))
 }
 
-# STANDALONE EXECUTION GUARD
-# 
-# Runs when this file is sourced directly in RStudio (for development/testing).
+# Standalone execution guard
+#
+# Runs when this file is sourced directly in RStudio.
 # Skipped when main.R sources this file because main.R sets SOURCED_BY_MAIN
 # to TRUE beforehand to prevent duplicate training and output conflicts.
+#
+# Finds config.R whether working directory is the project root or scripts/
 
 if (!exists("SOURCED_BY_MAIN")) {
-
-  source("config.R")
-
-  datasets <- load_preprocessed_data(CONFIG)
+  
+  # Locate config.R, works from both project root and scripts/ subfolder
+  config_path <- if (file.exists("config.R")) {
+    "config.R"
+  } else if (file.exists("../config.R")) {
+    "../config.R"
+  } else {
+    stop("Cannot find config.R. Set your working directory to the project root.")
+  }
+  source(config_path)
+  
+  datasets    <- load_preprocessed_data(CONFIG)
   lr_training <- train_and_select_lr(datasets, CONFIG)
-  lr_results <- evaluate_lr(lr_training$best_model,
-                            lr_training$best_label,
-                            datasets$test, CONFIG)
-  lr_plots <- plot_lr_results(lr_results, CONFIG)
-
+  lr_results  <- evaluate_lr(lr_training$best_model,
+                             lr_training$best_label,
+                             datasets$test, CONFIG)
+  lr_plots    <- plot_lr_results(lr_results, CONFIG)
+  
   saveRDS(lr_training, file.path(CONFIG$output_dir, "lr_training.rds"))
-  saveRDS(lr_results, file.path(CONFIG$output_dir, "lr_results.rds"))
-
+  saveRDS(lr_results,  file.path(CONFIG$output_dir, "lr_results.rds"))
+  
   message("[LR] Done. Outputs saved to: ", CONFIG$output_dir)
 }
