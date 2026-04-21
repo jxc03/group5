@@ -247,7 +247,15 @@ plot_metrics_barchart <- function(comparison, config) {
 # Standalone execution guard
 if (!exists("SOURCED_BY_MAIN")) {
 
-  source("config.R")
+  # Locate config.R, works from both project root and scripts/ subfolder
+  config_path <- if (file.exists("config.R")) {
+    "config.R"
+  } else if (file.exists("../config.R")) {
+    "../config.R"
+  } else {
+    stop("Cannot find config.R. Set your working directory to the project root.")
+  }
+  source(config_path)
 
   results <- load_model_results(CONFIG)
   comparison <- build_comparison_table(results, CONFIG)
