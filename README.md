@@ -186,3 +186,9 @@ Key decisions made to handle this:
   recall bias and prevents causal inference.
 - Models are not calibrated; predicted probabilities should not be
   interpreted as clinical risk scores without further validation.
+
+---
+
+## Testing individual scripts
+rm(list = ls()) # clears everything in environment
+source("scripts/3_logistic_regression.R") # Code example
